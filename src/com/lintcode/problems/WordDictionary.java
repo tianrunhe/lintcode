@@ -1,0 +1,70 @@
+package com.lintcode.problems;
+
+public class WordDictionary {
+    private TrieNode root = new TrieNode();
+
+    public void addWord(String word) {
+        // write your code here
+        insert(this.root, word);
+    }
+
+    private void insert(TrieNode root, String word) {
+        if (word == null || word.length() == 0) {
+            root.markWordStop();
+            return;
+        }
+        
+        char c = word.charAt(0);
+        TrieNode[] children = root.getChildren();
+        final int index = c - 'a';
+        if (children[index] == null) {
+            children[index] = new TrieNode();
+        }
+        if (children[26] == null) {
+            children[26] = new TrieNode();
+        }
+        insert(children[index], word.substring(1));
+        insert(children[26], word.substring(1));
+    }
+
+    public boolean search(String word) {
+        return search(this.root, word);
+    }
+
+    private boolean search(TrieNode root, String word) {
+        if (word == null || word.length() == 0) {
+            return root.isWordStop();
+        }
+        
+        char c = word.charAt(0);
+        int index = c == '.' ? 26 : c - 'a';
+        TrieNode[] children = root.getChildren();
+        if (children[index] == null) {
+            return false;
+        }
+        return search(children[index], word.substring(1));
+    }
+
+    private class TrieNode {
+        private TrieNode[] children;
+        private boolean wordStop;
+        
+        public TrieNode() {
+            this.children = new TrieNode[27];
+            this.wordStop = false;
+        }
+        
+        public TrieNode[] getChildren() {
+            return this.children;
+        }
+        
+        public boolean isWordStop() {
+            return this.wordStop;
+        }
+        
+        public void markWordStop() {
+            this.wordStop = true;
+        }
+    }
+
+}
