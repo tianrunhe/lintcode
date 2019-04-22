@@ -20,11 +20,7 @@ public class WordDictionary {
         if (children[index] == null) {
             children[index] = new TrieNode();
         }
-        if (children[26] == null) {
-            children[26] = new TrieNode();
-        }
         insert(children[index], word.substring(1));
-        insert(children[26], word.substring(1));
     }
 
     public boolean search(String word) {
@@ -37,12 +33,22 @@ public class WordDictionary {
         }
         
         char c = word.charAt(0);
-        int index = c == '.' ? 26 : c - 'a';
-        TrieNode[] children = root.getChildren();
-        if (children[index] == null) {
-            return false;
+        if (c == '.') {
+            boolean found = false;
+            for (TrieNode next : root.getChildren()) {
+                if (next != null && !found) {
+                    found = found | search(next, word.substring(1));
+                }
+            }
+            return found;
+        } else {
+            int index = c - 'a';
+            TrieNode[] children = root.getChildren();
+            if (children[index] == null) {
+                return false;
+            }
+            return search(children[index], word.substring(1));
         }
-        return search(children[index], word.substring(1));
     }
 
     private class TrieNode {
