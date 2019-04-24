@@ -1,8 +1,6 @@
 package com.lintcode.problems;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -53,7 +51,7 @@ public class MiniumSpanningTreeTest {
 
     @Test
     public void test3() {
-        List<Connection> input = new ArrayList();
+        List<Connection> input = new ArrayList<>();
         input.add(new Connection("pXZ","McI",41));
         input.add(new Connection("Xxb","XMY",28));
         input.add(new Connection("csf","LpY",57));
