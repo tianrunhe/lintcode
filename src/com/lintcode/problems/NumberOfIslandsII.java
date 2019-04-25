@@ -1,14 +1,11 @@
 package com.lintcode.problems;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.SortedSet;
-import java.util.TreeSet;
 
 /**
  * Given a n,m which means the row and column of the 2D matrix and an array of pair A( size k). 
@@ -150,10 +147,6 @@ public class NumberOfIslandsII {
                     components.put(aRoot, aMembers);
                 }
             }
-        }
-
-        public boolean query(T a, T b) {
-            return findRoot(a) == findRoot(b);
         }
 
         public int getNumberOfComponents() {
