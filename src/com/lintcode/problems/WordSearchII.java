@@ -47,7 +47,7 @@ public class WordSearchII {
         TrieNode[][] mapping = new TrieNode[board.length][board[0].length];
         for (int i = 0; i < board.length; ++i) {
             for (int j = 0; j < board[i].length; ++j) {
-                TrieNode node = new TrieNode(i, j, board[i][j]);
+                TrieNode node = new TrieNode(board[i][j], i , j);
                 mapping[i][j] = node;
             }
         }
@@ -59,19 +59,19 @@ public class WordSearchII {
 
                 TrieNode down = i + 1 < board.length ? mapping[i + 1][j] : null;
                 if (down != null) {
-                    node.addChild(down);
+                    node.addChild(board[i + 1][j], mapping[i + 1][j]);
                 }
                 TrieNode right = j + 1 < board[0].length ? mapping[i][j + 1] : null;
                 if (right != null) {
-                    node.addChild(right);
+                    node.addChild(board[i][j + 1], mapping[i][j + 1]);
                 }
                 TrieNode up = i - 1 >= 0 ? mapping[i - 1][j] : null;
                 if (up != null) {
-                    node.addChild(up);
+                    node.addChild(board[i - 1][j], mapping[i - 1][j]);
                 }
                 TrieNode left = j - 1 >= 0 ? mapping[i][j - 1] : null;
                 if (left != null) {
-                    node.addChild(left);
+                    node.addChild(board[i][j - 1], mapping[i][j - 1]);
                 }
 
                 Set<TrieNode> nodes = characterTrieNodes.getOrDefault(board[i][j], new HashSet<>());
@@ -86,7 +86,10 @@ public class WordSearchII {
                 Set<TrieNode> nodes = characterTrieNodes.getOrDefault(characters[0], new HashSet<>());
                 boolean found = false;
                 for(TrieNode node : nodes) {
-                    found = found | node.search(word, new HashSet<>());
+                    found = found | node.search(word);
+                    if (found) {
+                        break;
+                    }
                 }
                 if (found) {
                     result.add(word);
@@ -98,55 +101,81 @@ public class WordSearchII {
     }
 
     private class TrieNode {
-        Set<TrieNode> children;
+        Map<Character, Set<TrieNode>> children;
         private char c;
-        private int row;
-        private int col;
+        private int x;
+        private int y;
 
-        public TrieNode(int x, int y, char c) {
-            this.children = new HashSet<>();
-            this.row = x;
-            this.col = y;
+        public TrieNode(char c, int x, int y) {
+            this.children = new HashMap<>();
             this.c = c;
+            this.x = x;
+            this.y = y;
         }
 
-        public void addChild(TrieNode child) {
-            children.add(child);
+        public void addChild(char c, TrieNode child) {
+            Set<TrieNode> nodes = children.getOrDefault(c, new HashSet<>());
+            nodes.add(child);
+            children.put(c, nodes);
         }
 
-        public boolean search(String word, Set<TrieNode> visited) {
-            if (visited.contains(this)) {
-                return false;
-            }
-            if(word.isEmpty()) {
+        public boolean search(String word) {
+            return search(word, new HashSet<>());
+        }
+
+        private boolean search(String word, Set<TrieNode> visited) {
+            // base case
+            if (word.isEmpty()) {
                 return true;
             }
-            if (c != word.charAt(0)) {
-                return false;
-            } else if (children.isEmpty()) {
-                return word.length() == 1;
-            } else {
-                boolean found = false;
-                for (TrieNode child : children) {
-                    Set<TrieNode> newVisited = new HashSet<TrieNode>(visited);
-                    newVisited.add(this);
-                    found = found | child.search(word.substring(1), newVisited);
-                }
-                return found;
+            if (word.length() == 1) {
+                return !visited.contains(this) && this.c == word.charAt(0);
             }
+            // recursive relationship
+            boolean found = false;
+            for (TrieNode node : this.children.getOrDefault(word.charAt(1), new HashSet<>())) {
+                visited.add(this);
+                if (!visited.contains(node)) {
+                    found = found | node.search(word.substring(1), visited);
+                }
+                visited.remove(this);
+            }
+            return found;
         }
 
-        public int getRow() {
-            return row;
+        @Override
+        public String toString() {
+            return "(" + x + ", " + y + "): " + c;
         }
 
-        public int getCol() {
-            return col;
+        @Override
+        public int hashCode() {
+            final int prime = 31;
+            int result = 1;
+            result = prime * result + c;
+            result = prime * result + x;
+            result = prime * result + y;
+            return result;
         }
 
-        public char getCharacter() {
-            return c;
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj)
+                return true;
+            if (obj == null)
+                return false;
+            if (getClass() != obj.getClass())
+                return false;
+            TrieNode other = (TrieNode) obj;
+            if (c != other.c)
+                return false;
+            if (x != other.x)
+                return false;
+            if (y != other.y)
+                return false;
+            return true;
         }
+
     }
 
 }
