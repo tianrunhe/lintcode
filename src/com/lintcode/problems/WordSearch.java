@@ -75,6 +75,6 @@ public class WordSearch {
                 return true;
             }
         }
-        return !recursion && index == word.length();
+        return !recursion && index + 1 == word.length();
     }
 }
