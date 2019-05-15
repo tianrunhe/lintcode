@@ -31,12 +31,11 @@ public class RemoveElement {
             } else {
                 int j = i + 1;
                 while (j < A.length && A[i] == elem) {
-                    int temp = A[i];
                     A[i] = A[j];
-                    A[j++] = temp;
+                    A[j++] = elem;
                 }
                 if (j == A.length) {
-                    return A[i] == elem ? 0 : i + 1;
+                    return A[i] == elem ? i : i + 1;
                 }
             }
         }
